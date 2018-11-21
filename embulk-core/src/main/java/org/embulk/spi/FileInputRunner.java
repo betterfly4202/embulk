@@ -136,6 +136,12 @@ public class FileInputRunner implements InputPlugin, ConfigurableGuessInputPlugi
         try (CloseResource closer = new CloseResource(tran)) {
             try (AbortTransactionResource aborter = new AbortTransactionResource(tran)) {
                 FileInput fileInput = Decoders.open(decoderPlugins, task.getDecoderTaskSources(), tran);
+                if (fileInput.fileName().isPresent()) {
+                    Exec.getLogger(FileInputRunner.class).info(
+                            "Loading file [{}], with size [{}] bytes",
+                            fileInput.fileName().get(),
+                            fileInput.expectedSize().get());
+                }
                 closer.closeThis(fileInput);
                 parserPlugin.run(task.getParserTaskSource(), schema, fileInput, output);
 
