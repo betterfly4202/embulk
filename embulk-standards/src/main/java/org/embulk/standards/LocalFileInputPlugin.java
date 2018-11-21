@@ -105,7 +105,7 @@ public class LocalFileInputPlugin implements FileInputPlugin {
 
         final File file = new File(task.getFiles().get(taskIndex));
 
-        return new InputStreamTransactionalFileInput(
+        InputStreamTransactionalFileInput fileInput = new InputStreamTransactionalFileInput(
                 task.getBufferAllocator(),
                 new InputStreamTransactionalFileInput.Opener() {
                     public InputStream open() throws IOException {
@@ -120,6 +120,9 @@ public class LocalFileInputPlugin implements FileInputPlugin {
                 return Exec.newTaskReport();
             }
         };
+        fileInput.setFileName(file.getAbsolutePath());
+        fileInput.setExpectedSize(file.length());
+        return fileInput;
     }
 
     static List<String> listFilesForTesting(final PluginTask task, final Logger logger) {
